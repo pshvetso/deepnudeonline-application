@@ -5,7 +5,9 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "tbl_like")
+@Table(name = "tbl_like", uniqueConstraints={
+    @UniqueConstraint(columnNames = {"user_id", "post_id"})
+})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

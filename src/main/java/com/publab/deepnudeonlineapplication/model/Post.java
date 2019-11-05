@@ -1,6 +1,7 @@
 package com.publab.deepnudeonlineapplication.model;
 
 import lombok.*;
+import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -31,4 +32,12 @@ public class Post {
     @Column(length = 255)
     @NotEmpty
     private String title;
+
+    @Column
+    @Formula(value="(SELECT COUNT(*) FROM view v WHERE v.post_id = this.id)")
+    private int views;
+
+    @Column
+    @Formula(value="(SELECT COUNT(*) FROM like l WHERE l.post_id = this.id)")
+    private int likes;
 }

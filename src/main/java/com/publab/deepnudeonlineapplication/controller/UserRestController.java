@@ -3,7 +3,7 @@ package com.publab.deepnudeonlineapplication.controller;
 import com.publab.deepnudeonlineapplication.model.User;
 import com.publab.deepnudeonlineapplication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,11 +16,11 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    @RequestMapping("/registerUser")
+    @PostMapping("/registerUser")
     public User registerUser(@RequestParam(value = "username") String username,
                              @RequestParam(value = "firstName") String firstName,
                              @RequestParam(value = "lastName") String lastName,
-                             @RequestParam(value = "avatarId") Byte avatarId) {
+                             @RequestParam(value = "avatarId") byte avatarId) {
         return userService.registerUser(username, firstName, lastName, avatarId);
     }
 }

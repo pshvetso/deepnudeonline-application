@@ -17,7 +17,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User registerUser(String username, String firstName, String lastName, Byte avatarId) {
+    public User registerUser(String username, String firstName, String lastName, byte avatarId) {
         User newUser = User.builder()
                 .username(username)
                 .firstName(firstName)

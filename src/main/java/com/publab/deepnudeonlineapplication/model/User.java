@@ -22,7 +22,7 @@ public class User {
 
     @Column(unique = true, length = 16)
     @NotEmpty
-    private Integer hash;
+    private int hash;
 
     @Column(length = 16)
     @NotEmpty
@@ -38,7 +38,7 @@ public class User {
 
     @Column
     @NotEmpty
-    private Byte avatarId;
+    private byte avatarId;
 
     @Column
     @NotEmpty

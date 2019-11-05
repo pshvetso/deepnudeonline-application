@@ -1,26 +1,28 @@
 package com.publab.deepnudeonlineapplication.repository;
 
 import com.publab.deepnudeonlineapplication.model.Post;
+import com.publab.deepnudeonlineapplication.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface PostRepository extends JpaRepository<Post,Long> {
-    @Query("SELECT DISTINCT p " +
-            "FROM Post p " +
-            "JOIN p.user u " +
-            "WHERE t.id < :startPostId " +
-            "ORDER BY p.date")
-    List<Post> getPostsFromStartPostId(@Param("startPostId") Integer startPostId);
+    //getFeed implementations
 
-    @Query("SELECT DISTINCT p " +
-            "FROM Post p " +
-            "JOIN p.user u " +
-            "ORDER BY p.date")
-    List<Post> getLatestPosts();
+    List<Post> findTop10ByOrderByDateDesc();
+    List<Post> findTop10ByIdLessThanOrderByDateDesc(Long startPostId);
 
-    //getLatestPosts
-    List<Post> findTop10OrderByDate();
+    //getTopPosts implementations
+
+    List<Post> findTop10ByOrderByLikesDesc();
+    List<Post> findTop10ByIdLessThanOrderByLikesDesc(Long startPostId);
+
+    List<Post> findTop10ByDateGreaterThanOrderByLikesDesc(LocalDateTime startOfTimeSpan);
+    List<Post> findTop10ByDateGreaterThanAndIdLessThanOrderByLikesDesc(LocalDateTime startOfTimeSpan, Long startPostId);
+
+    //getUserPosts implementations
+
+    List<Post> findTop10ByUserOrderByDateDesc(User user);
+    List<Post> findTop10ByUserAndIdLessThanOrderByDateDesc(User user, Long startPostId);
 }
