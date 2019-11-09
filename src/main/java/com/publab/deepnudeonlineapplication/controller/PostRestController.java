@@ -4,10 +4,8 @@ import com.publab.deepnudeonlineapplication.model.Like;
 import com.publab.deepnudeonlineapplication.model.Post;
 import com.publab.deepnudeonlineapplication.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,33 +20,34 @@ public class PostRestController {
         this.postService = postService;
     }
 
-    @PostMapping("/newPost")
+    @PostMapping("/posts")
+    @ResponseStatus(HttpStatus.CREATED)
     public Post newPost(@RequestParam(value = "title") String title) {
         return postService.newPost(title);
     }
 
-    @RequestMapping("/getFeed")
+    @GetMapping("/feed")
     public List<Post> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
         return postService.getFeed(startPostId);
     }
 
-    @RequestMapping("/getTop")
+    @GetMapping("/top")
     public List<Post> getTop(@RequestParam(value = "interval") String topListTimeSpan, @RequestParam(value = "startFrom") Long startPostId) {
         TimeSpan timeSpan = TimeSpan.valueOf(topListTimeSpan.toUpperCase());
         return postService.getTopPosts(timeSpan, startPostId);
     }
 
-    @RequestMapping("/getUserWall")
+    @GetMapping("/userWall")
     public List<Post> getUserWall(@RequestParam(value = "startFrom") Long startPostId) {
         return postService.getUserWall(startPostId);
     }
 
-    @RequestMapping("/likePost")
+    @PostMapping("/likePost")
     public Like likePost(@RequestParam(value = "postId") Long postId) {
         return postService.likePost(postId);
     }
 
-    @RequestMapping("/unlikePost")
+    @PostMapping("/unlikePost")
     public List<Like> unlikePost(@RequestParam(value = "postId") Long postId) {
         return postService.unlikePost(postId);
     }
