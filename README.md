@@ -1,2 +1,2 @@
 # deepnudeonline-application
-deepnude online Spring web application (Spring MVC, Hibernate, Git, Vue.js, Bootstrap)
+Deepnude online Spring web application. Spring Boot, MVC, Hibernate, Git, Vue.js, Bootstrap.
