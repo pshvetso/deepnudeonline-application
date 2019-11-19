@@ -5,6 +5,7 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 
 @Entity
@@ -26,7 +27,7 @@ public class Post {
     private User user;
 
     @Column
-    @NotEmpty
+    @Past
     private LocalDateTime date;
 
     @Column(length = 255)

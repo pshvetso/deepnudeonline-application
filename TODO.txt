@@ -19,9 +19,8 @@ vue,react routing
     TODO
 
 UserService, UserController "spring controller notempty validation tests"
-https://www.baeldung.com/spring-data-jpa-batch-inserts
-Building REST services with Spring https://spring.io/guides/tutorials/rest/
 Spring REST Validation Example https://www.mkyong.com/spring-boot/spring-rest-validation-example/
+Custom Error Message Handling for REST API https://www.baeldung.com/global-error-handler-in-a-spring-rest-api
 https://www.baeldung.com/spring-boot-testing
 https://www.javacodegeeks.com/2013/08/unit-testing-of-spring-mvc-controllers-rest-api.html
 
@@ -41,6 +40,7 @@ interface MyRepository extends JpaRepository
 https://stackoverflow.com/questions/24638465/selecting-from-multiple-tables-in-spring-data
 https://stackoverflow.com/questions/2355728/jpql-create-new-object-in-select-statement-avoid-or-embrace/2359214#2359214
 
+Building REST services with Spring https://spring.io/guides/tutorials/rest/
 - keep readme up-to-date: description, technologies, architecture, data schema, API/controller endpoints
 - fix idea code analysis messages
 vue intros,vue+spring

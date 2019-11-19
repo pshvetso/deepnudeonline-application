@@ -36,7 +36,8 @@ public class UserRestControllerIntegrationTest {
                 "test username", "test first name", "test last name", 0)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)));
     }
 }
 

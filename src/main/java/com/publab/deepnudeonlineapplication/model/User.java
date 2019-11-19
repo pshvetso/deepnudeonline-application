@@ -4,10 +4,14 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
+@Table(indexes = {
+        @Index(name = "IDX_USERNAME", columnList="username")
+})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,26 +25,26 @@ public class User {
     private long id;
 
     @Column(unique = true, length = 16)
-    @NotEmpty
-    private int hash;
+    @NotNull
+    private Integer hash;
 
     @Column(length = 16)
-    @NotEmpty
+    @NotEmpty(message = "*Please provide valid username")
     private String username;
 
     @Column(length = 16)
-    @NotEmpty
+    @NotEmpty(message = "*Please provide valid first name")
     private String firstName;
 
     @Column(length = 16)
-    @NotEmpty
+    @NotEmpty(message = "*Please provide valid last name")
     private String lastName;
 
     @Column
-    @NotEmpty
+    @NotNull(message = "*Please provide valid avatar id")
     private byte avatarId;
 
     @Column
-    @NotEmpty
+    @Past
     private LocalDateTime lastVisitDate;
 }
