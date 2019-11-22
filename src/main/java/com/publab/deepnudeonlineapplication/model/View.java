@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(uniqueConstraints={
-@UniqueConstraint(columnNames = {"user_id", "post_id"})
+    @UniqueConstraint(columnNames = {"user_id", "post_id"})
 })
 @Builder
 @NoArgsConstructor
@@ -18,7 +18,7 @@ public class View {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "view_id")
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

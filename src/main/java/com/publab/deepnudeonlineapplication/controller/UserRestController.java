@@ -18,6 +18,7 @@ public class UserRestController {
         this.userService = userService;
     }
 
+    //curl -v -X POST localhost:8080/users -H "Content-type:application/x-www-form-urlencoded" -d "username=testusername&firstName=&lastName=&avatarId=0"
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public User registerUser(@RequestParam(value = "username") String username,

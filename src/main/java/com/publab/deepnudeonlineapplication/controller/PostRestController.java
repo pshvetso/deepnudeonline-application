@@ -1,10 +1,12 @@
 package com.publab.deepnudeonlineapplication.controller;
 
+import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO;
 import com.publab.deepnudeonlineapplication.model.Like;
 import com.publab.deepnudeonlineapplication.model.Post;
 import com.publab.deepnudeonlineapplication.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,8 +28,9 @@ public class PostRestController {
         return postService.newPost(title);
     }
 
-    @GetMapping("/feed")
-    public List<Post> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
+    //curl -v localhost:8080/feed?startFrom=0
+    @GetMapping(value = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PostDetailsDTO> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
         return postService.getFeed(startPostId);
     }
 

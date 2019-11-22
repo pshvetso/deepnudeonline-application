@@ -12,6 +12,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -25,19 +26,68 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(
         locations = "classpath:application-integrationtest.properties")
-public class UserRestControllerIntegrationTest {
+class UserRestControllerIntegrationTest {
+    private final String CONTROLLER_ENDPOINT_URL = "/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}";
+    private final String TEST_USERNAME = "test username";
+    private final String TEST_FIRST_NAME = "test first name";
+    private final String TEST_LAST_NAME = "test last name";
+    private final String BAD_REQUEST_STATUS = "BAD_REQUEST";
+    private final String CONSTRAINT_VIOLATION_MESSAGE = "Constraint violation";
+    private final int USER_NEXT_AUTO_INCREMENT_ID = 4;
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
-    public void whenInsertingUser_thenUserIsCreated() throws Exception {
+    void whenInsertingUser_thenUserIsCreated() throws Exception {
         this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
-                "test username", "test first name", "test last name", 0)
+                TEST_USERNAME, TEST_FIRST_NAME, TEST_LAST_NAME, 0)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id", is(1)));
+                .andExpect(jsonPath("$.id", is(USER_NEXT_AUTO_INCREMENT_ID)));
+    }
+
+    @Test
+    void whenUserHasEmptyUsername_thenValidationError() throws Exception {
+        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
+                "", TEST_FIRST_NAME, TEST_LAST_NAME, 0)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(BAD_REQUEST_STATUS)))
+                .andExpect(jsonPath("$.message", is(CONSTRAINT_VIOLATION_MESSAGE)))
+                .andExpect(jsonPath("$.errors", containsInAnyOrder(
+                        "com.publab.deepnudeonlineapplication.model.User username: *Please provide valid username"
+                )));
+    }
+
+    @Test
+    void whenUserHasEmptyFirstName_thenValidationError() throws Exception {
+        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
+                TEST_USERNAME, "", TEST_LAST_NAME, 0)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(BAD_REQUEST_STATUS)))
+                .andExpect(jsonPath("$.message", is(CONSTRAINT_VIOLATION_MESSAGE)))
+                .andExpect(jsonPath("$.errors", containsInAnyOrder(
+                        "com.publab.deepnudeonlineapplication.model.User firstName: *Please provide valid first name"
+                )));
+    }
+
+    @Test
+    void whenUserHasEmptyLastName_thenValidationError() throws Exception {
+        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
+                TEST_USERNAME, TEST_FIRST_NAME, "", 0)
+                .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status", is(BAD_REQUEST_STATUS)))
+                .andExpect(jsonPath("$.message", is(CONSTRAINT_VIOLATION_MESSAGE)))
+                .andExpect(jsonPath("$.errors", containsInAnyOrder(
+                        "com.publab.deepnudeonlineapplication.model.User lastName: *Please provide valid last name"
+                )));
     }
 }
 

@@ -5,11 +5,10 @@ import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 
 @Entity
-@Table
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,25 +19,17 @@ public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Column
-    @Past
+    @PastOrPresent
     private LocalDateTime date;
 
     @Column(length = 255)
     @NotEmpty
     private String title;
-
-    @Column
-    @Formula(value="(SELECT COUNT(*) FROM view v WHERE v.post_id = this.id)")
-    private int views;
-
-    @Column
-    @Formula(value="(SELECT COUNT(*) FROM like l WHERE l.post_id = this.id)")
-    private int likes;
 }

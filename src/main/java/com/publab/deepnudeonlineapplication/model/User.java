@@ -5,7 +5,7 @@ import lombok.*;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,7 +22,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private long id;
+    private Long id;
 
     @Column(unique = true, length = 16)
     @NotNull
@@ -42,9 +42,9 @@ public class User {
 
     @Column
     @NotNull(message = "*Please provide valid avatar id")
-    private byte avatarId;
+    private Byte avatarId;
 
     @Column
-    @Past
+    @PastOrPresent
     private LocalDateTime lastVisitDate;
 }

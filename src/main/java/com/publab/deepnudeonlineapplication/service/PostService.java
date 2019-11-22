@@ -1,6 +1,7 @@
 package com.publab.deepnudeonlineapplication.service;
 
 import com.publab.deepnudeonlineapplication.controller.PostRestController;
+import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO;
 import com.publab.deepnudeonlineapplication.model.Like;
 import com.publab.deepnudeonlineapplication.model.Post;
 import com.publab.deepnudeonlineapplication.model.User;
@@ -24,7 +25,7 @@ public class PostService {
     private final ViewRepository viewRepository;
 
     // TODO set current user
-    private final User loggedInUser = User.builder().build();
+    private final User loggedInUser = User.builder().id(1L).build();
 
     @Autowired
     public PostService(PostRepository postRepository, LikeRepository likeRepository, ViewRepository viewRepository) {
@@ -45,16 +46,12 @@ public class PostService {
         return newPost;
     }
 
-    public List<Post> getFeed(Long startPostId) {
-        List<Post> result;
+    public List<PostDetailsDTO> getFeed(Long startPostId) {
+        List<PostDetailsDTO> result;
 
-        if(startPostId == null) {
-            result = postRepository.findTop10ByOrderByDateDesc();
-        } else {
-            result = postRepository.findTop10ByIdLessThanOrderByDateDesc(startPostId);
-        }
+        result = postRepository.getFeed(loggedInUser.getId());
 
-        markPostsAsViewed(result);
+        //markPostsAsViewed(result);
 
         return result;
     }
@@ -82,15 +79,15 @@ public class PostService {
 
         if(startPostId == null) {
             if (startOfTimeSpan == null) {
-                result = postRepository.findTop10ByOrderByLikesDesc();
+                result = postRepository.findTop10ByOrderByIdDesc();
             } else {
-                result = postRepository.findTop10ByDateGreaterThanOrderByLikesDesc(startOfTimeSpan);
+                result = postRepository.findTop10ByDateGreaterThanOrderByIdDesc(startOfTimeSpan);
             }
         } else {
             if(startOfTimeSpan == null) {
-                result = postRepository.findTop10ByIdLessThanOrderByLikesDesc(startPostId);
+                result = postRepository.findTop10ByIdLessThanOrderByIdDesc(startPostId);
             } else {
-                result = postRepository.findTop10ByDateGreaterThanAndIdLessThanOrderByLikesDesc(startOfTimeSpan, startPostId);
+                result = postRepository.findTop10ByDateGreaterThanAndIdLessThanOrderByIdDesc(startOfTimeSpan, startPostId);
             }
         }
 
