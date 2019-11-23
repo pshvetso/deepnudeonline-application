@@ -4,12 +4,10 @@ import com.publab.deepnudeonlineapplication.model.User;
 import com.publab.deepnudeonlineapplication.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class UserRestController {
     private final UserService userService;
 
@@ -18,7 +16,7 @@ public class UserRestController {
         this.userService = userService;
     }
 
-    //curl -v -X POST localhost:8080/users -H "Content-type:application/x-www-form-urlencoded" -d "username=testusername&firstName=&lastName=&avatarId=0"
+    //curl -v -X POST localhost:8080/api/users -H "Content-type:application/x-www-form-urlencoded" -d "username=testusername&firstName=&lastName=&avatarId=0"
     @PostMapping("/users")
     @ResponseStatus(HttpStatus.CREATED)
     public User registerUser(@RequestParam(value = "username") String username,

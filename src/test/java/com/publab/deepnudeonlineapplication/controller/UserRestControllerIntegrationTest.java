@@ -27,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(
         locations = "classpath:application-integrationtest.properties")
 class UserRestControllerIntegrationTest {
-    private final String CONTROLLER_ENDPOINT_URL = "/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}";
     private final String TEST_USERNAME = "test username";
     private final String TEST_FIRST_NAME = "test first name";
     private final String TEST_LAST_NAME = "test last name";
@@ -40,8 +39,11 @@ class UserRestControllerIntegrationTest {
 
     @Test
     void whenInsertingUser_thenUserIsCreated() throws Exception {
-        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
-                TEST_USERNAME, TEST_FIRST_NAME, TEST_LAST_NAME, 0)
+        this.mockMvc.perform(post("/api/users")
+                .param("username", TEST_USERNAME)
+                .param("firstName", TEST_FIRST_NAME)
+                .param("lastName", TEST_LAST_NAME)
+                .param("avatarId", "0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -50,8 +52,11 @@ class UserRestControllerIntegrationTest {
 
     @Test
     void whenUserHasEmptyUsername_thenValidationError() throws Exception {
-        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
-                "", TEST_FIRST_NAME, TEST_LAST_NAME, 0)
+        this.mockMvc.perform(post("/api/users")
+                .param("username", "")
+                .param("firstName", TEST_FIRST_NAME)
+                .param("lastName", TEST_LAST_NAME)
+                .param("avatarId", "0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -64,8 +69,11 @@ class UserRestControllerIntegrationTest {
 
     @Test
     void whenUserHasEmptyFirstName_thenValidationError() throws Exception {
-        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
-                TEST_USERNAME, "", TEST_LAST_NAME, 0)
+        this.mockMvc.perform(post("/api/users")
+                .param("username", TEST_USERNAME)
+                .param("firstName", "")
+                .param("lastName", TEST_LAST_NAME)
+                .param("avatarId", "0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -78,8 +86,11 @@ class UserRestControllerIntegrationTest {
 
     @Test
     void whenUserHasEmptyLastName_thenValidationError() throws Exception {
-        this.mockMvc.perform(post("/users?username={username}&firstName={firstName}&lastName={lastName}&avatarId={avatarId}",
-                TEST_USERNAME, TEST_FIRST_NAME, "", 0)
+        this.mockMvc.perform(post("/api/users")
+                .param("username", TEST_USERNAME)
+                .param("firstName", TEST_FIRST_NAME)
+                .param("lastName", "")
+                .param("avatarId", "0")
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isBadRequest())

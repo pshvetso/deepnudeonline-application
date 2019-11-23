@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/api")
 public class PostRestController {
     private final PostService postService;
 
@@ -28,7 +29,7 @@ public class PostRestController {
         return postService.newPost(title);
     }
 
-    //curl -v localhost:8080/feed?startFrom=0
+    //curl -v localhost:8080/api/feed?startFrom=0
     @GetMapping(value = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostDetailsDTO> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
         return postService.getFeed(startPostId);

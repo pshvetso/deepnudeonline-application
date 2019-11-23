@@ -34,13 +34,12 @@ https://stackoverflow.com/questions/24638465/selecting-from-multiple-tables-in-s
 https://stackoverflow.com/questions/2355728/jpql-create-new-object-in-select-statement-avoid-or-embrace/2359214#2359214
 
 vue.js
-spa application (page templates)
-vue router
-https://www.youtube.com/watch?v=HNTQINYjSaE&list=PLLvTAhHe8AYCf1RDc2l2ZWriPfMf-yZel&index=64
-vue.js project structure https://itnext.io/how-to-structure-a-vue-js-project-29e4ddc1aeeb
+Vue JS (Лучшие русcкоязычные уроки) https://www.youtube.com/watch?v=HNTQINYjSaE&list=PLLvTAhHe8AYCf1RDc2l2ZWriPfMf-yZel&index=64
+spa application (page templates),vue router
 webpack создание vue приложения
-https://habr.com/ru/post/351882/
 vue+spring mvc(router),users/security
+    https://habr.com/ru/post/467161/
+    https://auth0.com/blog/vuejs-spring-boot-kotlin-and-graphql-building-modern-apps-part-1/
 vue json request
 https://github.com/misterGF/CoPilot
 
@@ -55,10 +54,10 @@ PostRepository, PostService, PostController tests (100% cover)
 Building REST services with Spring https://spring.io/guides/tutorials/rest/
 - keep readme up-to-date: description, technologies, architecture, data schema, API/controller endpoints
 - fix idea code analysis messages
-vue intros,vue+spring
 Spring Boot File Upload / Download Rest API Example https://www.callicoder.com/spring-boot-file-upload-download-rest-api-example/
 (userctrl)uploadAvatar
 wordpress theme https://demo.themegrill.com/colormag/ https://demo.themegrill.com/estore/
+https://www.baeldung.com/junit-5-migration
 
 Backend issues
 
