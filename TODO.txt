@@ -1,4 +1,6 @@
 
+    Tatooin Labs
+
     deepnude
 
 простейший сайт spring mvc+vue.js+bootstrap
@@ -37,9 +39,6 @@ vue.js
 Vue JS (Лучшие русcкоязычные уроки) https://www.youtube.com/watch?v=HNTQINYjSaE&list=PLLvTAhHe8AYCf1RDc2l2ZWriPfMf-yZel&index=64
 spa application (page templates),vue router
 webpack создание vue приложения
-vue+spring mvc(router),users/security
-    https://habr.com/ru/post/467161/
-    https://auth0.com/blog/vuejs-spring-boot-kotlin-and-graphql-building-modern-apps-part-1/
 vue json request
 https://github.com/misterGF/CoPilot
 
@@ -58,6 +57,7 @@ Spring Boot File Upload / Download Rest API Example https://www.callicoder.com/s
 (userctrl)uploadAvatar
 wordpress theme https://demo.themegrill.com/colormag/ https://demo.themegrill.com/estore/
 https://www.baeldung.com/junit-5-migration
+другие алгоритмы deepface
 
 Backend issues
 
