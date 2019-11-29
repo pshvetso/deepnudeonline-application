@@ -36,14 +36,14 @@ public class PostRestController {
     }
 
     @GetMapping("/top")
-    public List<Post> getTop(@RequestParam(value = "interval") String topListTimeSpan, @RequestParam(value = "startFrom") Long startPostId) {
+    public List<PostDetailsDTO> getTop(@RequestParam(value = "interval") String topListTimeSpan, @RequestParam(value = "startFrom") Long startPostId) {
         TimeSpan timeSpan = TimeSpan.valueOf(topListTimeSpan.toUpperCase());
         return postService.getTopPosts(timeSpan, startPostId);
     }
 
     @GetMapping("/userWall")
-    public List<Post> getUserWall(@RequestParam(value = "startFrom") Long startPostId) {
-        return postService.getUserWall(startPostId);
+    public List<PostDetailsDTO> getUserWall(@RequestParam(value = "userId") Long userId, @RequestParam(value = "startFrom") Long startPostId) {
+        return postService.getUserWall(userId, startPostId);
     }
 
     @PostMapping("/likePost")

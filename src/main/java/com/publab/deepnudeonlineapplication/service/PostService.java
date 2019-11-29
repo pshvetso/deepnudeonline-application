@@ -49,14 +49,18 @@ public class PostService {
     public List<PostDetailsDTO> getFeed(Long startPostId) {
         List<PostDetailsDTO> result;
 
-        result = postRepository.getFeed(loggedInUser.getId());
+        if(startPostId == null) {
+            result = postRepository.getFeed(loggedInUser.getId());
+        } else {
+            result = postRepository.getFeedByIdLessThan(loggedInUser.getId(), startPostId);
+        }
 
-        //markPostsAsViewed(result);
+        markPostsAsViewed(result);
 
         return result;
     }
 
-    public List<Post> getTopPosts(PostRestController.TimeSpan topListTimeSpan, Long startPostId) {
+    public List<PostDetailsDTO> getTopPosts(PostRestController.TimeSpan topListTimeSpan, Long startPostId) {
         LocalDateTime startOfTimeSpan;
 
         switch(topListTimeSpan) {
@@ -75,19 +79,19 @@ public class PostService {
                 break;
         }
 
-        List<Post> result;
+        List<PostDetailsDTO> result;
 
         if(startPostId == null) {
             if (startOfTimeSpan == null) {
-                result = postRepository.findTop10ByOrderByIdDesc();
+                result = postRepository.findTop10(loggedInUser.getId());
             } else {
-                result = postRepository.findTop10ByDateGreaterThanOrderByIdDesc(startOfTimeSpan);
+                result = postRepository.findTop10InTimeSpan(startOfTimeSpan, loggedInUser.getId());
             }
         } else {
             if(startOfTimeSpan == null) {
-                result = postRepository.findTop10ByIdLessThanOrderByIdDesc(startPostId);
+                result = postRepository.findTop10ByIdLessThan(startPostId, loggedInUser.getId());
             } else {
-                result = postRepository.findTop10ByDateGreaterThanAndIdLessThanOrderByIdDesc(startOfTimeSpan, startPostId);
+                result = postRepository.findTop10InTimeSpanByIdLessThan(startOfTimeSpan, startPostId, loggedInUser.getId());
             }
         }
 
@@ -96,13 +100,13 @@ public class PostService {
         return result;
     }
 
-    public List<Post> getUserWall(Long startPostId) {
-        List<Post> result;
+    public List<PostDetailsDTO> getUserWall(Long userId, Long startPostId) {
+        List<PostDetailsDTO> result;
 
         if(startPostId == null) {
-            result = postRepository.findTop10ByUserOrderByDateDesc(loggedInUser);
+            result = postRepository.findLatestPostsByUserId(userId, loggedInUser.getId());
         } else {
-            result = postRepository.findTop10ByUserAndIdLessThanOrderByDateDesc(loggedInUser, startPostId);
+            result = postRepository.findLatestPostsByUserIdAndIdLessThan(userId, startPostId, loggedInUser.getId());
         }
 
         markPostsAsViewed(result);
@@ -137,12 +141,12 @@ public class PostService {
         return postLikes;
     }
 
-    private void markPostsAsViewed(List<Post> viewedPosts) {
+    private void markPostsAsViewed(List<PostDetailsDTO> viewedPosts) {
         List<View> views = new ArrayList<>();
 
-        for(Post post : viewedPosts) {
+        for(PostDetailsDTO post : viewedPosts) {
             View view = View.builder()
-                    .post(post)
+                    .post(null)
                     .user(loggedInUser)
                     .build();
             views.add(view);
