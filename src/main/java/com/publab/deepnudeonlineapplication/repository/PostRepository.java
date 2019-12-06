@@ -16,18 +16,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
             "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "ORDER BY p.date " +
             "LIMIT 10;",
             nativeQuery = true)
@@ -36,18 +42,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
             "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.post_id < :startPostId " +
             "ORDER BY p.date " +
             "LIMIT 10;",
@@ -59,18 +71,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
             "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "ORDER BY likes " +
             "LIMIT 10;",
             nativeQuery = true)
@@ -79,18 +97,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
-                    "LEFT JOIN tbl_like l " +
+            "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.post_id < :startPostId " +
             "ORDER BY likes " +
             "LIMIT 10;",
@@ -100,18 +124,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
-                    "LEFT JOIN tbl_like l " +
+            "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.date > :startOfTimeSpan " +
             "ORDER BY likes " +
             "LIMIT 10;",
@@ -121,18 +151,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
-                    "LEFT JOIN tbl_like l " +
+            "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.date > :startOfTimeSpan " +
                     "AND p.post_id < :startPostId " +
             "ORDER BY likes " +
@@ -145,18 +181,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
-                    "LEFT JOIN tbl_like l " +
+            "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.user_id = :userId " +
                     "AND p.post_id < :startPostId " +
             "ORDER BY p.date " +
@@ -167,18 +209,24 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     @Query(value =
             "SELECT " +
                     "p.user_id AS id, " +
-                    "u.user_id AS userId, " +
-                    "l.like_id AS likeId, " +
-                    "u.username AS username, " +
-                    "u.avatar_id AS userAvatarId, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
+                    "u.user_id AS userId, " +
+                    "u.username AS username, " +
+                    "u.first_name AS firstName, " +
+                    "u.last_name AS lastName, " +
+                    "u.avatar_id AS userAvatarId, " +
+                    "l.like_id AS hasBeenLiked, " +
+                    "v.view_id as hasBeenViewed, " +
                     "(SELECT COUNT(*) FROM view v WHERE v.post_id = p.post_id) AS views, " +
                     "(SELECT COUNT(*) FROM tbl_like l WHERE l.post_id = p.post_id) AS likes " +
-            "FROM post p JOIN user u " +
+            "FROM post p " +
+            "JOIN user u " +
                     "ON p.user_id = u.user_id " +
-                    "LEFT JOIN tbl_like l " +
+            "LEFT JOIN tbl_like l " +
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
+            "LEFT JOIN view v " +
+                    "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.user_id = :userId " +
                     "AND p.post_id < :startPostId " +
             "ORDER BY p.date " +

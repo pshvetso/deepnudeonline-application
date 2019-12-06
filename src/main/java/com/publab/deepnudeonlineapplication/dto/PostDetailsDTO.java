@@ -5,17 +5,23 @@ import java.time.LocalDateTime;
 public interface PostDetailsDTO {
     Long getId();
 
-    Long getUserId();
-
-    Long getLikeId();
-
-    String getUsername();
-
-    String getUserAvatarId();
-
     LocalDateTime getDate();
 
     String getTitle();
+
+    Long getUserId();
+
+    String getUsername();
+
+    String getFirstName();
+
+    String getLastName();
+
+    String getUserAvatarId();
+
+    Long hasBeenLiked();
+
+    Long hasBeenViewed();
 
     Integer getViews();
 

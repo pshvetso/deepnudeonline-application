@@ -12,6 +12,8 @@ import com.publab.deepnudeonlineapplication.repository.ViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import java.util.List;
 
 @Service("postService")
 public class PostService {
+    private final EntityManager entityManager;
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
     private final ViewRepository viewRepository;
@@ -28,7 +31,8 @@ public class PostService {
     private final User loggedInUser = User.builder().id(1L).build();
 
     @Autowired
-    public PostService(PostRepository postRepository, LikeRepository likeRepository, ViewRepository viewRepository) {
+    public PostService(EntityManager entityManager, PostRepository postRepository, LikeRepository likeRepository, ViewRepository viewRepository) {
+        this.entityManager = entityManager;
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
         this.viewRepository = viewRepository;
@@ -141,18 +145,22 @@ public class PostService {
         return postLikes;
     }
 
-    private void markPostsAsViewed(List<PostDetailsDTO> viewedPosts) {
+    @Transactional
+    void markPostsAsViewed(List<PostDetailsDTO> viewedPosts) {
         List<View> views = new ArrayList<>();
 
-        for(PostDetailsDTO post : viewedPosts) {
-            View view = View.builder()
-                    .post(null)
-                    .user(loggedInUser)
-                    .build();
-            views.add(view);
+        for(PostDetailsDTO postDTO : viewedPosts) {
+            if(postDTO.hasBeenViewed() == null) {
+                Post post = entityManager.getReference(Post.class, postDTO.getId());
+
+                View view = View.builder()
+                        .post(post)
+                        .user(loggedInUser)
+                        .build();
+                views.add(view);
+            }
         }
 
-        // TODO ignore error if post already viewed
         viewRepository.saveAll(views);
     }
 
