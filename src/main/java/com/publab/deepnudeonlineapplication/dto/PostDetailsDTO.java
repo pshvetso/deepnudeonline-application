@@ -19,9 +19,9 @@ public interface PostDetailsDTO {
 
     String getUserAvatarId();
 
-    Long hasBeenLiked();
+    Long getHasBeenLiked();
 
-    Long hasBeenViewed();
+    Long getHasBeenViewed();
 
     Integer getViews();
 

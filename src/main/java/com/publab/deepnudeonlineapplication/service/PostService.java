@@ -56,7 +56,7 @@ public class PostService {
         if(startPostId == null) {
             result = postRepository.getFeed(loggedInUser.getId());
         } else {
-            result = postRepository.getFeedByIdLessThan(loggedInUser.getId(), startPostId);
+            result = postRepository.getFeedLaterThanPostId(startPostId, loggedInUser.getId());
         }
 
         markPostsAsViewed(result);
@@ -110,7 +110,7 @@ public class PostService {
         if(startPostId == null) {
             result = postRepository.findLatestPostsByUserId(userId, loggedInUser.getId());
         } else {
-            result = postRepository.findLatestPostsByUserIdAndIdLessThan(userId, startPostId, loggedInUser.getId());
+            result = postRepository.findLatestPostsByUserIdAndLaterThanPostId(userId, startPostId, loggedInUser.getId());
         }
 
         markPostsAsViewed(result);
@@ -150,7 +150,7 @@ public class PostService {
         List<View> views = new ArrayList<>();
 
         for(PostDetailsDTO postDTO : viewedPosts) {
-            if(postDTO.hasBeenViewed() == null) {
+            if(postDTO.getHasBeenViewed() == null) {
                 Post post = entityManager.getReference(Post.class, postDTO.getId());
 
                 View view = View.builder()

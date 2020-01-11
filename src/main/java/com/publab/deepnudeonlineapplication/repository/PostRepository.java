@@ -15,7 +15,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -34,14 +34,14 @@ public interface PostRepository extends JpaRepository<Post,Long> {
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
-            "ORDER BY p.date " +
+            "ORDER BY p.date DESC " +
             "LIMIT 10;",
             nativeQuery = true)
     List<PostDetailsDTO> getFeed(@Param("currentUserId") Long currentUserId);
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -60,17 +60,18 @@ public interface PostRepository extends JpaRepository<Post,Long> {
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
-            "WHERE p.post_id < :startPostId " +
-            "ORDER BY p.date " +
+            "WHERE p.date <= (SELECT date FROM post WHERE post_id = :startPostId) " +
+                    "AND p.post_id != :startPostId " +
+            "ORDER BY p.date DESC " +
             "LIMIT 10;",
             nativeQuery = true)
-    List<PostDetailsDTO> getFeedByIdLessThan(@Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
+    List<PostDetailsDTO> getFeedLaterThanPostId(@Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
 
     //getTopPosts implementations
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -89,14 +90,14 @@ public interface PostRepository extends JpaRepository<Post,Long> {
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
-            "ORDER BY likes " +
+            "ORDER BY likes DESC " +
             "LIMIT 10;",
             nativeQuery = true)
     List<PostDetailsDTO> findTop10(@Param("currentUserId") Long currentUserId);
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -116,14 +117,14 @@ public interface PostRepository extends JpaRepository<Post,Long> {
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.post_id < :startPostId " +
-            "ORDER BY likes " +
+            "ORDER BY likes DESC " +
             "LIMIT 10;",
             nativeQuery = true)
     List<PostDetailsDTO> findTop10ByIdLessThan(@Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -143,14 +144,14 @@ public interface PostRepository extends JpaRepository<Post,Long> {
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.date > :startOfTimeSpan " +
-            "ORDER BY likes " +
+            "ORDER BY likes DESC " +
             "LIMIT 10;",
             nativeQuery = true)
     List<PostDetailsDTO> findTop10InTimeSpan(@Param("startOfTimeSpan") LocalDateTime startOfTimeSpan, @Param("currentUserId") Long currentUserId);
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -171,7 +172,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.date > :startOfTimeSpan " +
                     "AND p.post_id < :startPostId " +
-            "ORDER BY likes " +
+            "ORDER BY likes DESC " +
             "LIMIT 10;",
             nativeQuery = true)
     List<PostDetailsDTO> findTop10InTimeSpanByIdLessThan(@Param("startOfTimeSpan") LocalDateTime startOfTimeSpan, @Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
@@ -180,7 +181,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -200,15 +201,14 @@ public interface PostRepository extends JpaRepository<Post,Long> {
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
             "WHERE p.user_id = :userId " +
-                    "AND p.post_id < :startPostId " +
-            "ORDER BY p.date " +
+            "ORDER BY p.date DESC " +
             "LIMIT 10;",
             nativeQuery = true)
     List<PostDetailsDTO> findLatestPostsByUserId(@Param("userId") Long userId, @Param("currentUserId") Long currentUserId);
 
     @Query(value =
             "SELECT " +
-                    "p.user_id AS id, " +
+                    "p.post_id AS id, " +
                     "p.date AS date, " +
                     "p.title AS title, " +
                     "u.user_id AS userId, " +
@@ -227,11 +227,12 @@ public interface PostRepository extends JpaRepository<Post,Long> {
                     "ON p.post_id = l.post_id AND l.user_id = :currentUserId " +
             "LEFT JOIN view v " +
                     "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
-            "WHERE p.user_id = :userId " +
-                    "AND p.post_id < :startPostId " +
-            "ORDER BY p.date " +
+            "WHERE p.date <= (SELECT date FROM post WHERE post_id = :startPostId) " +
+                    "AND p.post_id != :startPostId " +
+                    "AND p.user_id = :userId " +
+            "ORDER BY p.date DESC " +
             "LIMIT 10;",
             nativeQuery = true)
-    List<PostDetailsDTO> findLatestPostsByUserIdAndIdLessThan(@Param("userId") Long userId, @Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
+    List<PostDetailsDTO> findLatestPostsByUserIdAndLaterThanPostId(@Param("userId") Long userId, @Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
 
 }
