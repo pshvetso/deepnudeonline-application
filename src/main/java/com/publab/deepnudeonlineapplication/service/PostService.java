@@ -118,6 +118,11 @@ public class PostService {
         return result;
     }
 
+    public PostDetailsDTO getPost(Long id) {
+        return postRepository.getPost(id, loggedInUser.getId());
+    }
+
+    @Transactional
     public Like likePost(Long postId) {
         Post post = postRepository.getOne(postId);
         Like like = null;

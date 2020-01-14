@@ -46,6 +46,12 @@ public class PostRestController {
         return postService.getUserWall(userId, startPostId);
     }
 
+    //curl -v localhost:8080/api/post?id=14
+    @GetMapping("/post")
+    public PostDetailsDTO getPost(@RequestParam(value = "id") Long id) {
+        return postService.getPost(id);
+    }
+
     @PostMapping("/likePost")
     public Like likePost(@RequestParam(value = "postId") Long postId) {
         return postService.likePost(postId);
