@@ -2,7 +2,7 @@ package com.publab.deepnudeonlineapplication.dto;
 
 import java.time.LocalDateTime;
 
-public interface PostDetailsDTO {
+public interface PostDetailsDTO_ {
     Long getId();
 
     LocalDateTime getDate();

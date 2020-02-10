@@ -1,12 +1,12 @@
 package com.publab.deepnudeonlineapplication.model;
 
 import lombok.*;
-import org.hibernate.annotations.Formula;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
 @Builder
@@ -32,4 +32,10 @@ public class Post {
     @Column(length = 255)
     @NotEmpty
     private String title;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private Set<Like> likes;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
+    private Set<View> views;
 }

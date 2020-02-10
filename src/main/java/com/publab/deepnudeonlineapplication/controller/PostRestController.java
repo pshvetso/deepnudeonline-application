@@ -1,6 +1,7 @@
 package com.publab.deepnudeonlineapplication.controller;
 
-import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO;
+import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO_;
+import com.publab.deepnudeonlineapplication.dto.PostDetailsDto;
 import com.publab.deepnudeonlineapplication.model.Like;
 import com.publab.deepnudeonlineapplication.model.Post;
 import com.publab.deepnudeonlineapplication.service.PostService;
@@ -29,35 +30,36 @@ public class PostRestController {
         return postService.newPost(title);
     }
 
-    //curl -v localhost:8080/api/feed?startFrom=0
+    //curl -v http://localhost:8080/api/feed?startFrom=
     @GetMapping(value = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PostDetailsDTO> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
+    public List<PostDetailsDto> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
         return postService.getFeed(startPostId);
     }
 
-    @GetMapping("/top")
-    public List<PostDetailsDTO> getTop(@RequestParam(value = "interval") String topListTimeSpan, @RequestParam(value = "startFrom") Long startPostId) {
+    //http://localhost:8080/api/top?interval=ALLTIME&page=0
+    @GetMapping(value = "/top", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PostDetailsDto> getTop(@RequestParam(value = "interval") String topListTimeSpan, @RequestParam(value = "page") Integer pageNum) {
         TimeSpan timeSpan = TimeSpan.valueOf(topListTimeSpan.toUpperCase());
-        return postService.getTopPosts(timeSpan, startPostId);
+        return postService.getTopPosts(timeSpan, pageNum);
     }
 
-    @GetMapping("/userWall")
-    public List<PostDetailsDTO> getUserWall(@RequestParam(value = "userId") Long userId, @RequestParam(value = "startFrom") Long startPostId) {
+    @GetMapping(value = "/userWall", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PostDetailsDTO_> getUserWall(@RequestParam(value = "userId") Long userId, @RequestParam(value = "startFrom") Long startPostId) {
         return postService.getUserWall(userId, startPostId);
     }
 
     //curl -v localhost:8080/api/post?id=14
-    @GetMapping("/post")
-    public PostDetailsDTO getPost(@RequestParam(value = "id") Long id) {
+    @GetMapping(value = "/post", produces = MediaType.APPLICATION_JSON_VALUE)
+    public PostDetailsDTO_ getPost(@RequestParam(value = "id") Long id) {
         return postService.getPost(id);
     }
 
-    @PostMapping("/likePost")
+    @PostMapping(value = "/likePost", produces = MediaType.APPLICATION_JSON_VALUE)
     public Like likePost(@RequestParam(value = "postId") Long postId) {
         return postService.likePost(postId);
     }
 
-    @PostMapping("/unlikePost")
+    @PostMapping(value = "/unlikePost", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Like> unlikePost(@RequestParam(value = "postId") Long postId) {
         return postService.unlikePost(postId);
     }

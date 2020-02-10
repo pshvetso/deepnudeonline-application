@@ -1,12 +1,14 @@
 package com.publab.deepnudeonlineapplication.service;
 
 import com.publab.deepnudeonlineapplication.controller.PostRestController;
-import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO;
+import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO_;
+import com.publab.deepnudeonlineapplication.dto.PostDetailsDto;
 import com.publab.deepnudeonlineapplication.model.Like;
 import com.publab.deepnudeonlineapplication.model.Post;
 import com.publab.deepnudeonlineapplication.model.User;
 import com.publab.deepnudeonlineapplication.model.View;
 import com.publab.deepnudeonlineapplication.repository.LikeRepository;
+import com.publab.deepnudeonlineapplication.repository.PostDetailsRepository;
 import com.publab.deepnudeonlineapplication.repository.PostRepository;
 import com.publab.deepnudeonlineapplication.repository.ViewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import java.util.List;
 public class PostService {
     private final EntityManager entityManager;
     private final PostRepository postRepository;
+    private final PostDetailsRepository postDetailsRepository;
     private final LikeRepository likeRepository;
     private final ViewRepository viewRepository;
 
@@ -31,9 +34,11 @@ public class PostService {
     private final User loggedInUser = User.builder().id(1L).build();
 
     @Autowired
-    public PostService(EntityManager entityManager, PostRepository postRepository, LikeRepository likeRepository, ViewRepository viewRepository) {
+    public PostService(EntityManager entityManager, PostRepository postRepository, PostDetailsRepository postDetailsRepository,
+                       LikeRepository likeRepository, ViewRepository viewRepository) {
         this.entityManager = entityManager;
         this.postRepository = postRepository;
+        this.postDetailsRepository = postDetailsRepository;
         this.likeRepository = likeRepository;
         this.viewRepository = viewRepository;
     }
@@ -50,24 +55,17 @@ public class PostService {
         return newPost;
     }
 
-    public List<PostDetailsDTO> getFeed(Long startPostId) {
-        List<PostDetailsDTO> result;
-
-        if(startPostId == null) {
-            result = postRepository.getFeed(loggedInUser.getId());
-        } else {
-            result = postRepository.getFeedLaterThanPostId(startPostId, loggedInUser.getId());
-        }
-
+    public List<PostDetailsDto> getFeed(Long startPostId) {
+        List<PostDetailsDto> result;
+        result = postDetailsRepository.getFeedLaterThanPostId(startPostId, loggedInUser.getId());
         markPostsAsViewed(result);
-
         return result;
     }
 
-    public List<PostDetailsDTO> getTopPosts(PostRestController.TimeSpan topListTimeSpan, Long startPostId) {
+    public List<PostDetailsDto> getTopPosts(PostRestController.TimeSpan topListTimeSpan, Integer pageNum) {
         LocalDateTime startOfTimeSpan;
 
-        switch(topListTimeSpan) {
+        switch (topListTimeSpan) {
             case ALLTIME:
                 startOfTimeSpan = null;
                 break;
@@ -83,42 +81,26 @@ public class PostService {
                 break;
         }
 
-        List<PostDetailsDTO> result;
-
-        if(startPostId == null) {
-            if (startOfTimeSpan == null) {
-                result = postRepository.findTop10(loggedInUser.getId());
-            } else {
-                result = postRepository.findTop10InTimeSpan(startOfTimeSpan, loggedInUser.getId());
-            }
-        } else {
-            if(startOfTimeSpan == null) {
-                result = postRepository.findTop10ByIdLessThan(startPostId, loggedInUser.getId());
-            } else {
-                result = postRepository.findTop10InTimeSpanByIdLessThan(startOfTimeSpan, startPostId, loggedInUser.getId());
-            }
-        }
-
+        List<PostDetailsDto> result = postDetailsRepository.findTop10InTimeSpan(startOfTimeSpan, pageNum, loggedInUser.getId());
         markPostsAsViewed(result);
-
         return result;
     }
 
-    public List<PostDetailsDTO> getUserWall(Long userId, Long startPostId) {
-        List<PostDetailsDTO> result;
+    public List<PostDetailsDTO_> getUserWall(Long userId, Long startPostId) {
+        List<PostDetailsDTO_> result;
 
-        if(startPostId == null) {
+        if (startPostId == null) {
             result = postRepository.findLatestPostsByUserId(userId, loggedInUser.getId());
         } else {
             result = postRepository.findLatestPostsByUserIdAndLaterThanPostId(userId, startPostId, loggedInUser.getId());
         }
 
-        markPostsAsViewed(result);
+        markPostsAsViewed_(result);
 
         return result;
     }
 
-    public PostDetailsDTO getPost(Long id) {
+    public PostDetailsDTO_ getPost(Long id) {
         return postRepository.getPost(id, loggedInUser.getId());
     }
 
@@ -127,7 +109,7 @@ public class PostService {
         Post post = postRepository.getOne(postId);
         Like like = null;
 
-        if(post != null) {
+        if (post != null) {
             like = Like.builder()
                     .post(post)
                     .user(loggedInUser)
@@ -151,12 +133,31 @@ public class PostService {
     }
 
     @Transactional
-    void markPostsAsViewed(List<PostDetailsDTO> viewedPosts) {
+    void markPostsAsViewed_(List<PostDetailsDTO_> viewedPosts) {
         List<View> views = new ArrayList<>();
 
-        for(PostDetailsDTO postDTO : viewedPosts) {
-            if(postDTO.getHasBeenViewed() == null) {
+        for (PostDetailsDTO_ postDTO : viewedPosts) {
+            if (postDTO.getHasBeenViewed() == null) {
                 Post post = entityManager.getReference(Post.class, postDTO.getId());
+
+                View view = View.builder()
+                        .post(post)
+                        .user(loggedInUser)
+                        .build();
+                views.add(view);
+            }
+        }
+
+        viewRepository.saveAll(views);
+    }
+
+    @Transactional
+    void markPostsAsViewed(List<PostDetailsDto> viewedPosts) {
+        List<View> views = new ArrayList<>();
+
+        for (PostDetailsDto postDto : viewedPosts) {
+            if (postDto.getHasBeenViewed() == null) {
+                Post post = entityManager.getReference(Post.class, postDto.getId());
 
                 View view = View.builder()
                         .post(post)
