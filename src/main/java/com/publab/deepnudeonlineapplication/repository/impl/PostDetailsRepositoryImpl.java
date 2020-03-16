@@ -93,11 +93,32 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
     "LEFT JOIN view v " +
             "ON p.post_id = v.post_id AND v.user_id = :currentUserId " +
     "WHERE p.date > :startOfTimeSpan " +
-            "AND p.post_id < :startPostId " +
     "ORDER BY likes DESC " +
-    "LIMIT 10;"
+    "LIMIT :pageNum, 10;"
      */
-    @Override
+
+    private String buildQueryTop10InTimeSpan(LocalDateTime startOfTimeSpan) {
+        StringBuilder query = new StringBuilder(
+            "SELECT new com.publab.deepnudeonlineapplication.dto.PostDetailsDto" +
+                    "(p.id, p.date, p.title, u.id, u.username, u.firstName, u.lastName, u.avatarId, " +
+                    "(SELECT l.id FROM Like l WHERE l MEMBER OF p.likes AND l.user.id = :currentUserId), " +
+                    "(SELECT v.id FROM View v WHERE v MEMBER OF p.views AND v.user.id = :currentUserId), " +
+                    "(SELECT count(v1) FROM View v1 WHERE v1 MEMBER OF p.views), " +
+                    "(SELECT count(l1) FROM Like l1 WHERE l1 MEMBER OF p.likes) AS likes) " +
+                    "FROM Post p " +
+                    "JOIN User u ON p.user = u"
+        );
+
+        if(startOfTimeSpan != null) {
+            query.append(" WHERE p.date > :startOfTimeSpan");
+        }
+
+        query.append(" ORDER BY likes");
+
+        return query.toString();
+    }
+
+    /*@Override
     public List<PostDetailsDto> findTop10InTimeSpan(LocalDateTime startOfTimeSpan, Integer pageNum, Long currentUserId) {
         CriteriaQuery<PostDetailsDto> cq = cb.createQuery(PostDetailsDto.class);
         Root<Post> root = cq.from(Post.class);
@@ -113,6 +134,21 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
         TypedQuery<PostDetailsDto> query = createTypedQuery(cq, order);
         query.setFirstResult(pageNum * pageSize);
         return query.getResultList();
+    }*/
+
+    @Override
+    public List<PostDetailsDto> findTop10InTimeSpan(LocalDateTime startOfTimeSpan, Integer pageNum, Long currentUserId) {
+        String queryString = buildQueryTop10InTimeSpan(startOfTimeSpan);
+        TypedQuery<PostDetailsDto> query = em.createQuery(queryString, PostDetailsDto.class);
+
+        if(startOfTimeSpan != null) {
+            query.setParameter("startOfTimeSpan", startOfTimeSpan);
+        }
+
+        return query.setParameter("currentUserId", currentUserId)
+                .setFirstResult(pageNum * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
     private void constructQuery(CriteriaQuery<PostDetailsDto> cq, Root<Post> root, Long currentUserId) {
@@ -126,12 +162,14 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
         Subquery<Long> viewsSubquery = cq.subquery(Long.class);
         Root<View> viewsSubqueryRoot = viewsSubquery.from(View.class);
         viewsSubquery.select( cb.count(viewsSubqueryRoot) )
-                .where( cb.equal(viewsSubqueryRoot.get("post"), root.get("id")) );
+                .where( cb.equal(viewsSubqueryRoot.get("post"), root.get("id")) )
+                .alias("views");
 
         Subquery<Long> likesSubquery = cq.subquery(Long.class);
         Root<Like> likesSubqueryRoot = likesSubquery.from(Like.class);
         likesSubquery.select( cb.count(likesSubqueryRoot) )
-                .where( cb.equal(likesSubqueryRoot.get("post"), root.get("id")) );
+                .where( cb.equal(likesSubqueryRoot.get("post"), root.get("id")) )
+                .alias("likes");
 
         cq.select( cb.construct(PostDetailsDto.class,
                 root.get("id"),

@@ -37,6 +37,7 @@ public class PostRestController {
     }
 
     //http://localhost:8080/api/top?interval=ALLTIME&page=0
+    //http://localhost:8080/api/top?interval=day&page=0
     @GetMapping(value = "/top", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<PostDetailsDto> getTop(@RequestParam(value = "interval") String topListTimeSpan, @RequestParam(value = "page") Integer pageNum) {
         TimeSpan timeSpan = TimeSpan.valueOf(topListTimeSpan.toUpperCase());
