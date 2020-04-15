@@ -105,8 +105,8 @@ public class PostService {
     }
 
     @Transactional
-    public Like likePost(Long postId) {
-        Post post = postRepository.getOne(postId);
+    public void likePost(Long id) {
+        Post post = postRepository.getOne(id);
         Like like = null;
 
         if (post != null) {
@@ -118,18 +118,12 @@ public class PostService {
             // TODO ignore error if post already liked
             likeRepository.saveAndFlush(like);
         }
-
-        return like;
     }
 
-    public List<Like> unlikePost(long postId) {
-        Post post = postRepository.getOne(postId);
-
+    public void dislikePost(long id) {
+        Post post = postRepository.getOne(id);
         List<Like> postLikes = likeRepository.findByPostAndUser(post, loggedInUser);
-
         likeRepository.deleteAll(postLikes);
-
-        return postLikes;
     }
 
     @Transactional

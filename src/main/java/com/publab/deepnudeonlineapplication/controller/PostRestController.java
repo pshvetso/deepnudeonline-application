@@ -2,7 +2,6 @@ package com.publab.deepnudeonlineapplication.controller;
 
 import com.publab.deepnudeonlineapplication.dto.PostDetailsDTO_;
 import com.publab.deepnudeonlineapplication.dto.PostDetailsDto;
-import com.publab.deepnudeonlineapplication.model.Like;
 import com.publab.deepnudeonlineapplication.model.Post;
 import com.publab.deepnudeonlineapplication.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,14 +54,16 @@ public class PostRestController {
         return postService.getPost(id);
     }
 
-    @PostMapping(value = "/likePost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Like likePost(@RequestParam(value = "postId") Long postId) {
-        return postService.likePost(postId);
+    @PostMapping(value = "/like", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void like(@RequestParam(value = "id") Long id) {
+        postService.likePost(id);
     }
 
-    @PostMapping(value = "/unlikePost", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Like> unlikePost(@RequestParam(value = "postId") Long postId) {
-        return postService.unlikePost(postId);
+    @PostMapping(value = "/dislike", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    public void dislike(@RequestParam(value = "id") Long id) {
+        postService.dislikePost(id);
     }
 
 }

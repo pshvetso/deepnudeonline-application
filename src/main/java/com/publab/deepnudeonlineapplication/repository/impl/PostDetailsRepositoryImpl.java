@@ -101,10 +101,10 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
         StringBuilder query = new StringBuilder(
             "SELECT new com.publab.deepnudeonlineapplication.dto.PostDetailsDto" +
                     "(p.id, p.date, p.title, u.id, u.username, u.firstName, u.lastName, u.avatarId, " +
-                    "(SELECT l.id FROM Like l WHERE l MEMBER OF p.likes AND l.user.id = :currentUserId), " +
-                    "(SELECT v.id FROM View v WHERE v MEMBER OF p.views AND v.user.id = :currentUserId), " +
-                    "(SELECT count(v1) FROM View v1 WHERE v1 MEMBER OF p.views), " +
-                    "(SELECT count(l1) FROM Like l1 WHERE l1 MEMBER OF p.likes) AS likes) " +
+                    "(SELECT l.id FROM Like l WHERE (l.post.id = p.id) AND (l.user.id = :currentUserId)), " +
+                    "(SELECT v.id FROM View v WHERE (v.post.id = p.id) AND (v.user.id = :currentUserId)), " +
+                    "(SELECT count(v1) FROM View v1 WHERE v1.post.id = p.id) AS views, " +
+                    "(SELECT count(l1) FROM Like l1 WHERE l1.post.id = p.id) AS likes) " +
                     "FROM Post p " +
                     "JOIN User u ON p.user = u"
         );
