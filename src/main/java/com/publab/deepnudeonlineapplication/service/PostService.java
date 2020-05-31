@@ -86,17 +86,9 @@ public class PostService {
         return result;
     }
 
-    public List<PostDetailsDTO_> getUserWall(Long userId, Long startPostId) {
-        List<PostDetailsDTO_> result;
-
-        if (startPostId == null) {
-            result = postRepository.findLatestPostsByUserId(userId, loggedInUser.getId());
-        } else {
-            result = postRepository.findLatestPostsByUserIdAndLaterThanPostId(userId, startPostId, loggedInUser.getId());
-        }
-
-        markPostsAsViewed_(result);
-
+    public List<PostDetailsDto> getUserWall(Long userId, Integer pageNum) {
+        List<PostDetailsDto> result = postDetailsRepository.getUserWall(userId, pageNum, loggedInUser.getId());
+        markPostsAsViewed(result);
         return result;
     }
 
@@ -126,7 +118,7 @@ public class PostService {
         likeRepository.deleteAll(postLikes);
     }
 
-    @Transactional
+    /*@Transactional
     void markPostsAsViewed_(List<PostDetailsDTO_> viewedPosts) {
         List<View> views = new ArrayList<>();
 
@@ -143,7 +135,7 @@ public class PostService {
         }
 
         viewRepository.saveAll(views);
-    }
+    }*/
 
     @Transactional
     void markPostsAsViewed(List<PostDetailsDto> viewedPosts) {

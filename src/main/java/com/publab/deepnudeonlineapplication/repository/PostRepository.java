@@ -176,7 +176,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
     */
     //getUserPosts implementations
 
-    @Query(value =
+    /*@Query(value =
             "SELECT " +
                     "p.post_id AS id, " +
                     "p.date AS date, " +
@@ -230,7 +230,7 @@ public interface PostRepository extends JpaRepository<Post,Long> {
             "ORDER BY p.date DESC " +
             "LIMIT 10;",
             nativeQuery = true)
-    List<PostDetailsDTO_> findLatestPostsByUserIdAndLaterThanPostId(@Param("userId") Long userId, @Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);
+    List<PostDetailsDTO_> findLatestPostsByUserIdAndLaterThanPostId(@Param("userId") Long userId, @Param("startPostId") Long startPostId, @Param("currentUserId") Long currentUserId);*/
 
     @Query(value =
             "SELECT " +

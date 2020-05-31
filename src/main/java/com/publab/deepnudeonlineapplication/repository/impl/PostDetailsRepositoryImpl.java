@@ -17,6 +17,16 @@ import java.util.List;
 
 @Repository
 public class PostDetailsRepositoryImpl implements PostDetailsRepository {
+    private final String PostDetailsDtoQueryTpl =
+            "SELECT new com.publab.deepnudeonlineapplication.dto.PostDetailsDto" +
+                    "(p.id, p.date, p.title, u.id, u.username, u.firstName, u.lastName, u.avatarId, " +
+                    "(SELECT l.id FROM Like l WHERE (l.post.id = p.id) AND (l.user.id = :currentUserId)), " +
+                    "(SELECT v.id FROM View v WHERE (v.post.id = p.id) AND (v.user.id = :currentUserId)), " +
+                    "(SELECT count(v1) FROM View v1 WHERE v1.post.id = p.id) AS views, " +
+                    "(SELECT count(l1) FROM Like l1 WHERE l1.post.id = p.id) AS likes) " +
+                    "FROM Post p " +
+                    "JOIN User u ON p.user = u";
+
     private final int pageSize = 10;
     private CriteriaBuilder cb;
 
@@ -97,27 +107,6 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
     "LIMIT :pageNum, 10;"
      */
 
-    private String buildQueryTop10InTimeSpan(LocalDateTime startOfTimeSpan) {
-        StringBuilder query = new StringBuilder(
-            "SELECT new com.publab.deepnudeonlineapplication.dto.PostDetailsDto" +
-                    "(p.id, p.date, p.title, u.id, u.username, u.firstName, u.lastName, u.avatarId, " +
-                    "(SELECT l.id FROM Like l WHERE (l.post.id = p.id) AND (l.user.id = :currentUserId)), " +
-                    "(SELECT v.id FROM View v WHERE (v.post.id = p.id) AND (v.user.id = :currentUserId)), " +
-                    "(SELECT count(v1) FROM View v1 WHERE v1.post.id = p.id) AS views, " +
-                    "(SELECT count(l1) FROM Like l1 WHERE l1.post.id = p.id) AS likes) " +
-                    "FROM Post p " +
-                    "JOIN User u ON p.user = u"
-        );
-
-        if(startOfTimeSpan != null) {
-            query.append(" WHERE p.date > :startOfTimeSpan");
-        }
-
-        query.append(" ORDER BY likes");
-
-        return query.toString();
-    }
-
     /*@Override
     public List<PostDetailsDto> findTop10InTimeSpan(LocalDateTime startOfTimeSpan, Integer pageNum, Long currentUserId) {
         CriteriaQuery<PostDetailsDto> cq = cb.createQuery(PostDetailsDto.class);
@@ -146,6 +135,29 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
         }
 
         return query.setParameter("currentUserId", currentUserId)
+                .setFirstResult(pageNum * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
+    }
+
+    private String buildQueryTop10InTimeSpan(LocalDateTime startOfTimeSpan) {
+        StringBuilder query = new StringBuilder(PostDetailsDtoQueryTpl);
+        if(startOfTimeSpan != null) {
+            query.append(" WHERE p.date > :startOfTimeSpan");
+        }
+        query.append(" ORDER BY likes");
+        return query.toString();
+    }
+
+    @Override
+    public List<PostDetailsDto> getUserWall(Long userId, Integer pageNum, Long currentUserId) {
+        String queryString = PostDetailsDtoQueryTpl +
+                " WHERE p.user.id = :userId " +
+                "ORDER BY date";
+        TypedQuery<PostDetailsDto> query = em.createQuery(queryString, PostDetailsDto.class);
+
+        return query.setParameter("userId", userId)
+                .setParameter("currentUserId", currentUserId)
                 .setFirstResult(pageNum * pageSize)
                 .setMaxResults(pageSize)
                 .getResultList();

@@ -9,4 +9,6 @@ public interface PostDetailsRepository {
     List<PostDetailsDto> getFeedLaterThanPostId(Long startPostId, Long currentUserId);
 
     List<PostDetailsDto> findTop10InTimeSpan(LocalDateTime startOfTimeSpan, Integer pageNum, Long currentUserId);
+
+    List<PostDetailsDto> getUserWall(Long userId, Integer pageNum, Long currentUserId);
 }

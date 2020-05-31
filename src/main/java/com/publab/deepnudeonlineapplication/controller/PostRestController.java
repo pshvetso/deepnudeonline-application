@@ -43,9 +43,9 @@ public class PostRestController {
         return postService.getTopPosts(timeSpan, pageNum);
     }
 
-    @GetMapping(value = "/userWall", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PostDetailsDTO_> getUserWall(@RequestParam(value = "userId") Long userId, @RequestParam(value = "startFrom") Long startPostId) {
-        return postService.getUserWall(userId, startPostId);
+    @GetMapping(value = "/wall", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<PostDetailsDto> getUserWall(@RequestParam(value = "id") Long userId, @RequestParam(value = "page") Integer pageNum) {
+        return postService.getUserWall(userId, pageNum);
     }
 
     //curl -v localhost:8080/api/post?id=14
