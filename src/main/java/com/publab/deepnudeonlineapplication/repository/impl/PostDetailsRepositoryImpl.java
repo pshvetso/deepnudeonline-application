@@ -65,20 +65,23 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
     "LIMIT 10;"
      */
     @Override
-    public List<PostDetailsDto> getFeedLaterThanPostId(Long startPostId, Long currentUserId) {
+    public List<PostDetailsDto> getFeedLaterThanPostId(Integer pageNum, Long currentUserId) {
         CriteriaQuery<PostDetailsDto> cq = cb.createQuery(PostDetailsDto.class);
         Root<Post> root = cq.from(Post.class);
         constructQuery(cq, root, currentUserId);
 
-        List<Predicate> predicates = new ArrayList<>();
+        /*List<Predicate> predicates = new ArrayList<>();
         if(startPostId != null) {
             predicates.add( cb.lessThan(root.get("id"), startPostId) );
         }
-        cq.where(predicates.toArray(new Predicate[0]));
+        cq.where(predicates.toArray(new Predicate[0]));*/
 
-        Order order = cb.desc(root.get("date"));
-        TypedQuery<PostDetailsDto> query = createTypedQuery(cq, order);
-        return query.getResultList();
+        Order dateOrder = cb.desc(root.get("date"));
+        Order idOrder = cb.desc(root.get("id"));
+        TypedQuery<PostDetailsDto> query = createTypedQuery(cq, dateOrder, idOrder);
+        return query.setFirstResult(pageNum * pageSize)
+                .setMaxResults(pageSize)
+                .getResultList();
     }
 
     /*
@@ -145,7 +148,7 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
         if(startOfTimeSpan != null) {
             query.append(" WHERE p.date > :startOfTimeSpan");
         }
-        query.append(" ORDER BY likes");
+        query.append(" ORDER BY likes, p.id");
         return query.toString();
     }
 
@@ -153,7 +156,7 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
     public List<PostDetailsDto> getUserWall(Long userId, Integer pageNum, Long currentUserId) {
         String queryString = PostDetailsDtoQueryTpl +
                 " WHERE p.user.id = :userId " +
-                "ORDER BY date";
+                "ORDER BY date, p.id";
         TypedQuery<PostDetailsDto> query = em.createQuery(queryString, PostDetailsDto.class);
 
         return query.setParameter("userId", userId)
@@ -198,7 +201,7 @@ public class PostDetailsRepositoryImpl implements PostDetailsRepository {
                 likesSubquery) );
     }
 
-    private TypedQuery<PostDetailsDto> createTypedQuery(CriteriaQuery<PostDetailsDto> cq, Order order) {
+    private TypedQuery<PostDetailsDto> createTypedQuery(CriteriaQuery<PostDetailsDto> cq, Order... order) {
         cq.orderBy(order);
         TypedQuery<PostDetailsDto> query = em.createQuery(cq);
         query.setMaxResults(pageSize);

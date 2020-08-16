@@ -55,9 +55,9 @@ public class PostService {
         return newPost;
     }
 
-    public List<PostDetailsDto> getFeed(Long startPostId) {
+    public List<PostDetailsDto> getFeed(Integer pageNum) {
         List<PostDetailsDto> result;
-        result = postDetailsRepository.getFeedLaterThanPostId(startPostId, loggedInUser.getId());
+        result = postDetailsRepository.getFeedLaterThanPostId(pageNum, loggedInUser.getId());
         markPostsAsViewed(result);
         return result;
     }

@@ -31,8 +31,8 @@ public class PostRestController {
 
     //curl -v http://localhost:8080/api/feed?startFrom=
     @GetMapping(value = "/feed", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<PostDetailsDto> getFeed(@RequestParam(value = "startFrom") Long startPostId) {
-        return postService.getFeed(startPostId);
+    public List<PostDetailsDto> getFeed(@RequestParam(value = "page") Integer pageNum) {
+        return postService.getFeed(pageNum);
     }
 
     //http://localhost:8080/api/top?interval=ALLTIME&page=0
