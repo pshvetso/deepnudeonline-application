@@ -11,7 +11,7 @@ import com.publab.deepnudeonlineapplication.repository.LikeRepository;
 import com.publab.deepnudeonlineapplication.repository.PostDetailsRepository;
 import com.publab.deepnudeonlineapplication.repository.PostRepository;
 import com.publab.deepnudeonlineapplication.repository.ViewRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Service("postService")
+@Service
+@RequiredArgsConstructor
 public class PostService {
     private final EntityManager entityManager;
     private final PostRepository postRepository;
@@ -32,16 +33,6 @@ public class PostService {
 
     // TODO set current user
     private final User loggedInUser = User.builder().id(1L).build();
-
-    @Autowired
-    public PostService(EntityManager entityManager, PostRepository postRepository, PostDetailsRepository postDetailsRepository,
-                       LikeRepository likeRepository, ViewRepository viewRepository) {
-        this.entityManager = entityManager;
-        this.postRepository = postRepository;
-        this.postDetailsRepository = postDetailsRepository;
-        this.likeRepository = likeRepository;
-        this.viewRepository = viewRepository;
-    }
 
     public Post newPost(String title) {
         Post newPost = Post.builder()
@@ -99,10 +90,9 @@ public class PostService {
     @Transactional
     public void likePost(Long id) {
         Post post = postRepository.getOne(id);
-        Like like = null;
 
         if (post != null) {
-            like = Like.builder()
+            Like like = Like.builder()
                     .post(post)
                     .user(loggedInUser)
                     .build();

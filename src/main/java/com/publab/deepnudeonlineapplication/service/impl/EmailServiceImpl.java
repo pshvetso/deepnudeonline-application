@@ -1,7 +1,7 @@
 package com.publab.deepnudeonlineapplication.service.impl;
 
 import com.publab.deepnudeonlineapplication.service.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -13,11 +13,11 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Service("EmailService")
+@RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
     private static final String mailFromUsername = "";
 
-    @Autowired
-    public JavaMailSender emailSender;
+    private final JavaMailSender emailSender;
 
     public void sendSimpleMessage(String[] to, String subject, String text) {
         try {

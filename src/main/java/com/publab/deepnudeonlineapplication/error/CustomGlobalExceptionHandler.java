@@ -1,5 +1,6 @@
 package com.publab.deepnudeonlineapplication.error;
 
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
+    // Checks Dto in controller parameters
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers,
@@ -35,7 +37,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         List<String> errors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(x -> x.getDefaultMessage())
+                .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
 
         body.put("errors", errors);
@@ -43,12 +45,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(body, headers, status);
     }
 
+    // Checks Entity fields before storing into DB (@NotNull, @NotBlank)
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(
             ConstraintViolationException ex, WebRequest request) {
         final String msg = "Constraint violation";
 
-        List<String> errors = new ArrayList<String>();
+        List<String> errors = new ArrayList<>();
         for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
             errors.add(violation.getRootBeanClass().getName() + " " +
                     violation.getPropertyPath() + ": " + violation.getMessage());
@@ -68,12 +71,13 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return "redirect:/uploadStatus";
 
     }*/
+
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(value = HttpStatus.PRECONDITION_FAILED)
     @ResponseBody
     protected ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex,
                                                                             final HttpServletRequest request,
-                                                                            final HttpServletResponse response) throws IOException {
+                                                                            final HttpServletResponse response) {
         String msg = "Error sending message.";
         final String SizeLimitExceededException = "org.apache.tomcat.util.http.fileupload.FileUploadBase$SizeLimitExceededException";
         //org.apache.tomcat.util.http.fileupload.FileUploadBase$SizeLimitExceededException: the request was rejected because its size (520771) exceeds the configured maximum (51200)

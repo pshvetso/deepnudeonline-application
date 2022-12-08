@@ -25,11 +25,10 @@ public class Post {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column
     @PastOrPresent
     private LocalDateTime date;
 
-    @Column(length = 255)
+    @Column
     @NotEmpty
     private String title;
 
